@@ -9,7 +9,8 @@ driver.get('http://uitestingplayground.com/ajax')
 
 
 WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, "#ajaxButton"))
+    EC.element_to_be_clickable((
+        By.CSS_SELECTOR, "#ajaxButton"))
 ).click()
 
 
@@ -19,6 +20,4 @@ text_area = WebDriverWait(driver, 20).until(
 )
 
 print(text_area.text)
-
-
 driver.quit()

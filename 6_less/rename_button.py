@@ -14,11 +14,25 @@ button.click()
 
 # Ожидаем, пока текст кнопки обновится
 WebDriverWait(driver, 20).until(
-    EC.text_to_be_present_in_element((By.CSS_SELECTOR, ".btn.btn-primary"), "SkyPro")
+    EC.text_to_be_present_in_element(
+        (By.CSS_SELECTOR, ".btn.btn-primary"), "SkyPro")
 )
 
-# Проверяем и выводим новый текст кнопки
 updated_button_text = button.text
 print(updated_button_text)
+
+driver.quit()
+
+# Добавляем пустую строку в конец файла
+with open(__file__, 'a') as f:
+    f.write('\n')
+
+
+
+
+
+
+
+
 
 
