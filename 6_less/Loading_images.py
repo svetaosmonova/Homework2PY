@@ -5,36 +5,15 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 driver = webdriver.Chrome()
-driver.get(
-    "https://bonigarcia.dev/selenium-webdriver-java/loading-images.html")
 
-wait = WebDriverWait(driver, 10)
+driver.get('https://bonigarcia.dev/selenium-webdriver-java/loading-images.html')
 
-
-images = wait.until(
-    EC.visibility_of_all_elements_located((
-        By.TAG_NAME, 'img'
-    ))
+uploaded = WebDriverWait(driver, 20)
+uploaded.until(
+    EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#text'), 'Done!')
 )
 
-
-if len(images) >= 4:
-    print("Все изображения загружены.")
-else:
-    print("Не все изображения загружены.")
-
-
-try:
-    wait.until(
-        EC.visibility_of_element_located((
-            By.ID, "doneMessage"))
-    )
-    print("Надпись 'Done!' появилась.")
-except Exception as e:
-    print(f"Надпись 'Done!' не появилась: {e}")
-
-
-src_value = images[-1].get_attribute("src")
-print(f"Ссылка на последнее изображение: {src_value}")
+src = driver.find_element(By.CSS_SELECTOR, '#award').get_attribute('src')
+print(src)
 
 driver.quit()
