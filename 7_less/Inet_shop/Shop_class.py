@@ -1,114 +1,46 @@
-import pytest
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
-@pytest.fixture(scope="module")
-def driver():
-
-    driver = webdriver.Chrome()
-    driver.implicitly_wait(3)
-    driver.maximize_window()
-    yield driver
-    driver.quit()
-
-class LoginPage:
+class ShopPage:
     def __init__(self, driver):
         self.driver = driver
-        self.driver.get("https://www.saucedemo.com/")
-        self.wait = WebDriverWait(driver, 5)
+        self.url = "https://www.saucedemo.com/"
 
-        self.username_input = (By.ID, "user-name")  # Локатор для поля ввода имени пользователя
-        self.password_input = (By.ID, "password")   # Локатор для поля ввода пароля
-        self.login_button = (By.CLASS_NAME, "btn_action")  # Локатор для кнопки входа
-
-    def enter_username(self, username):
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.username_input)).send_keys(username)
-
-    def enter_password(self, password):
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.password_input)).send_keys(password)
-
-    def click_login_button(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.login_button)).click()
-
-class MainPage:
-    # Инициализирует элементы на странице
-    def __init__(self, driver):
-        self.driver = driver
-        self.driver.get("https://www.saucedemo.com/")
-        self.wait = WebDriverWait(driver, 5)
-
-        self.add_to_cart_buttons = {
-            "backpack": (By.XPATH,
-                         "//div[contains(text(), 'Sauce Labs Backpack')]//ancestor::div[@class='inventory_item']//descendant::button"),
-            "t-shirt": (By.XPATH,
-                        "//div[contains(text(), 'Sauce Labs Bolt T-Shirt')]//ancestor::div[@class='inventory_item']//descendant::button"),
-            "onesie": (By.XPATH,
-                       "//div[contains(text(), 'Sauce Labs Onesie')]//ancestor::div[@class='inventory_item']//descendant::button")
-        }
-        self.cart_icon = (By.CLASS_NAME, "shopping_cart_link")
-
-    # Добавляет товар в корзину
-    def add_item_to_cart(self, item_name):
-        locator = self.add_to_cart_buttons[item_name]
-        WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(locator)).click()
-
-    # Переходит в корзину
-    def go_to_cart(self):
-        WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable(self.cart_icon)).click()
-class CartPage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.driver.get("https://www.saucedemo.com/")
-        self.wait = WebDriverWait(driver, 5)
-
-        self.checkout_button = (By.CLASS_NAME, "checkout_button")
-
-
-    def click_checkout_button(self):
-        self.wait.until(EC.element_to_be_clickable(self.checkout_button)).click()
-
-
-
-
-class CheckoutPage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.driver.get("https://www.saucedemo.com/")
-        self.wait = WebDriverWait(driver, 5)
-
-        self.fields = {
-            'first-name': "first-name",
-            'last-name': "last-name",
-            'postal_code': "postal-code",
-             'continue_button': "#continue",
-            'total_cost_label': "summary_total_label"
-        }
+        self.username = (By.ID, "user-name")
+        self.password = (By.ID, "password")
+        self.login_button = (By.CSS_SELECTOR, ".btn_action")
+        self.backpack = (By.ID, "add-to-cart-sauce-labs-backpack")
+        self.tshirt = (By.ID, "add-to-cart-sauce-labs-bolt-t-shirt")
+        self.onesie = (By.ID, "add-to-cart-sauce-labs-onesie")
+        self.cart_button = (By.CSS_SELECTOR, ".shopping_cart_link")
+        self.checkout_button = (By.CSS_SELECTOR, "#checkout")
+        self.first_name = (By.ID, "first-name")
+        self.last_name = (By.ID, "last-name")
+        self.postal_code = (By.ID, "postal-code")
+        self.continue_button = (By.CSS_SELECTOR, ".btn_primary.cart_button")
+        self.total = (By.CSS_SELECTOR, ".summary_total_label")
 
     def open(self):
-        self.driver.get(
-            "https://bonigarcia.dev/selenium-webdriver-java/data-types.html"
-        )
+        self.driver.get(self.url)
 
-    def fill_form(self):
-        for field, value in self.fields.items():
-            self.wait.until(
-                EC.presence_of_element_located((
-                    By.NAME, field))).send_keys(value)
+    def login(self, username, password):
+        self.driver.find_element(*self.username).send_keys(username)
+        self.driver.find_element(*self.password).send_keys(password)
+        self.driver.find_element(*self.login_button).click()
 
-    def submit_form(self):
-        self.wait.until(
-            EC.element_to_be_clickable((
-                By.CSS_SELECTOR, '[type="submit"]'))).click()
+    def add_to_cart(self):
+        self.driver.find_element(*self.backpack).click()
+        self.driver.find_element(*self.tshirt).click()
+        self.driver.find_element(*self.onesie).click()
 
-    def get_field_class(self, field_id):
-        element = self.wait.until(
-            EC.presence_of_element_located((
-                By.ID, field_id))).get_attribute("class")
-        return element
+    def checkout(self, first_name, last_name, postal_code):
+        self.driver.find_element(*self.cart_button).click()
+        self.driver.find_element(*self.checkout_button).click()
+        self.driver.find_element(*self.first_name).send_keys(first_name)
+        self.driver.find_element(*self.last_name).send_keys(last_name)
+        self.driver.find_element(*self.postal_code).send_keys(postal_code)
+        self.driver.find_element(*self.continue_button).click()
 
-    def get_total_cost(self):
-        total_cost_element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.total_cost_label))
-        return total_cost_element.text.split(":")[1].strip()
+    def get_total(self):
+        return self.driver.find_element(*self.total).text
