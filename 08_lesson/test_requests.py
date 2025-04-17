@@ -1,7 +1,7 @@
 import requests
 
 base_url = "https://ru.yougile.com"
-token = "BLJyW0r9LT3rwUqY-WD8dOuPndA6tKJ3vGxRYO7APgk8oqx1ZQucB8JX5ouN1n54"
+token = ""
 
 headers = {
      "Content-Type": "application/json",
