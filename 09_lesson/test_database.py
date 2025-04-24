@@ -25,7 +25,8 @@ def test_add_subject():
     connection = db.connect()
     transaction = connection.begin()
 
-    sql = text("""insert into subject(\"subject_id\", \"subject_title\") values (: new_id, : new_title)""")
+    sql = text(
+        """insert into subject("subject_id", "subject_title") values (:new_id, :new_title)""")
     connection.execute(sql, {"new_id": 20, "new_title": "test_subject"})
     sql2 = text("select * from subject WHERE subject_id = :sub_id")
     result = connection.execute(sql2, {"sub_id": 20})
@@ -40,12 +41,10 @@ def test_update_subject():
     connection = db.connect()
     transaction = connection.begin()
     sql = text(
-    """UPDATE subject SET subject_title = : 
-    update_title WHERE subject_id = : sub_id""")
+        """UPDATE subject SET subject_title = :update_title WHERE subject_id = :sub_id""")
     connection.execute(
         sql, {"sub_id": 20, "update_title": "test_subject2"})
-    sql2 = text(
-        "SELECT subject_title FROM subject WHERE subject_id = : sub_id")
+    sql2 = text("SELECT subject_title FROM subject WHERE subject_id = :sub_id")
     result = connection.execute(sql2, {"sub_id": 20})
     rows = result.mappings().all()
     rows1 = rows[0]
@@ -60,10 +59,10 @@ def test_update_subject():
 def test_delete_subject():
     connection = db.connect()
     transaction = connection.begin()
-    sql = text("""DELETE FROM subject WHERE subject_id = : sub_id""")
-    connection.execute(sql, {"sub_id": 20})
-    sql2 = text("SELECT subject_title  FROM subject WHERE subject_id = : sub_id")
-    result = connection.execute(sql2, {"sub_id": 20})
+    sql = text("""DELETE FROM subject WHERE subject_id = :sub_id""")
+    connection.execute(sql, {"sub_id" : 20})
+    sql2 = text("SELECT subject_title FROM subject WHERE subject_id = :sub_id")
+    result = connection.execute(sql2, {"sub_id" : 20})
     rows = result.mappings().all()
     assert len(rows) == 0, "Запись не была удалена из базы данных!"
     transaction.commit()
